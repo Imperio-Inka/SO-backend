@@ -1,0 +1,1898 @@
+template(name='apiPlayground')
+
+	.api.container-fluid
+
+		#nav
+
+			ul.nav.nav-pills.nav-stacked
+				li
+					a(href='#top') Home
+				li
+					a(href='#connection') Connection
+				li
+					a(href='#users') Users
+				li
+					a(href='#contacts') Contacts
+				li
+					a(href='#calendars') Calendars
+				li
+					a(href='#events') Events
+				li
+					a(href='#attendees') Attendees
+				li
+					a(href='#invitations') Invitations
+				li
+					a(href='#tags') Tags
+				li
+					a(href='#likes') Likes
+				li
+					a(href='#subscriptions') Subscriptions
+
+		#doc
+
+			.jumbotron#top
+				h1 get-high
+					br
+					small API playground
+				em The order of the doc structured can also be use for the order of procedure on a client.
+
+			.cat#connection
+				h2
+					span.label.label-default Connection
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Test DDP connection
+						.panel-body
+							p Make sure client server connection is established before proceed.
+							ul
+								li Need to set up basic url and ssl configurations
+								li For https use wss://, for http use ws://
+								li No login or authentication required for this test
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code conn.test
+									td
+								tr
+									th Params
+									td 
+										code
+									td None
+								tr
+									th Return
+									td
+										code
+									td Print connection result to console
+					button.btn.btn-default#connectionTestButton DDP Connection Test
+
+			.cat#users
+				h2
+					span.label.label-default Users
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Login with google
+						.panel-body
+							p Login user with google accounts. Clients should have specific login methods with Google servises comes from DDP library.
+							ul
+								li Client_id for backend is used here
+						table.table
+							tbody
+								tr
+									th Method
+									td Depending on clients
+								tr
+									th Params
+									td Depending on clients
+								tr
+									th Return
+									td See results below
+					img(src="#{currentUser.services.google.picture}")
+					if currentUser.services.google
+						span #{currentUser.services.google.name}
+						br
+						button.btn.btn-default#logout Logout
+					else
+						button.btn.btn-default#google-login Login with Google
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Login with facebook
+						.panel-body
+							p Login user with facebook accounts. Clients should have specific login methods with Facebook servises comes from DDP library.
+							ul
+								li Client_id for backend is used here
+						table.table
+							tbody
+								tr
+									th Method
+									td Depending on clients
+								tr
+									th Params
+									td Depending on clients
+								tr
+									th Return
+									td See results below
+					img(src="#{currentUser.services.facebook.picture}")
+					if currentUser.services.facebook
+						span #{currentUser.services.facebook.name}
+						br
+						button.btn.btn-default#logout Logout
+					else
+						button.btn.btn-default#facebook-login Login with Facebook
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Login with token
+						.panel-body
+							p Login user with last token to restore previous session.
+							ul
+								li !!! TOKEN IS NOT HASHED TOKEN FOUND IN USER OBJECT !!!
+								li !!! TOKEN WILL BE RETURNED ON LOGIN WITH CLIENTS !!!
+								li Token is not what google api returned but on our server.
+								li Token is set to never expire.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.loginWithToken
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Token (hashedToken)
+								tr
+									th Return
+									td See results below
+									td
+					form.form-inline
+						input.form-control#token(placeholder='Token')
+						button.btn.btn-default#loginWithTokenButton Token
+					em If you get the token from a mobile client, and use it to login on the API Playground, you will be able to restore the same session on the mobile clients. But be sure not to logout before using the token or it will tell you user not logged in.
+
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Current user
+						.panel-body
+							p Get the current logged in user on the server.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.currentUser
+									td
+								tr
+									th Params
+									td
+									td None
+								tr
+									th Return
+									td
+										code {Object}
+									td Current user object (user collection)
+					button.btn.btn-default#checkLoggedInButton Get Current User
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Get School List
+						.panel-body
+							p Get a list of all schools.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code schools.list
+									td
+								tr
+									th Params
+									td
+										code 
+									td None
+								tr
+									th Return
+									td
+										code {[String]}
+									td Array of schools
+					form.form-inline
+						button.btn.btn-default#schoolsListButton Get Schools
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set user school
+						.panel-body
+							p After use first register, that sould come after the login or register phase when the user get to choose a school name.
+							ul
+								li !!! USER MUST HAVE SELECTED SCHOOL BEFORE USING CALENDARS AND EVENTS !!!
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.setSchool
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td School name
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#schoolName(placeholder='School name')
+						button.btn.btn-default#setSchoolNameButton Set School
+
+			.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set user's name
+						.panel-body
+							p Set user's name, save to profile.name.
+							ul
+								li On user creation, it is aquired automatically by google login.
+								li User can always change it later.
+								li Does not have to be unique.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.setName
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Name
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#setName(placeholder='Name')
+						button.btn.btn-default#setNameButton Set Name
+						div
+							strong #{currentUser.profile.name}
+
+			.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set user's picture
+						.panel-body
+							p Set user's picture, base64.
+							ul
+								li Size limit 16mb.
+								li However you should limit or compress the image size to under 100kb when sending.
+								li Convert image to array buffer base64 first then send pass the result string as parameter.
+								li Convert image to jpg please.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.setPicture
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Picture buffer
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						label.btn.btn-default.btn-file Browse
+							input#setPicture(type='file', style='display: none;', onchange="$('#upload-file-info').html($(this).val());")
+						button.btn.btn-default#setPictureButton Set Picture
+						span.label.label-info#upload-file-info
+						div
+							img(src="#{currentUser.profile.picture}")
+						
+			.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set user's phone number
+						.panel-body
+							p Set user's phone number, save to profile.phoneNumber.
+							ul
+								li !!! CLIENTS MUST VERIFY THE INTEGRITY OF USER'S PHONE NUMBER BEFORE CALLING THIS METHOD !!!
+								li Phone number will be used to identify whether the user has our app or not.
+								li A verified phone number may be used to grant the user abilities to do some sensetive actions.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.setPhoneNumber
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Phone Number
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#phoneNumber(placeholder='Phone Number')
+						button.btn.btn-default#setPhoneNumberButton Set Phone Number
+
+			.cat#contacts
+				h2
+					span.label.label-default Contacts
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Retrieve contacts
+						.panel-body
+							p Get contacts from google as well as updating contacts associated with current user in our database.
+							ul
+								li !!! WIPE! !!!
+								li Google does not support sync only updates, so every time this method being called will result in a wipe of all contacts associated with the user.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code contacts.retrieve
+									td
+								tr
+									th Params
+									td 
+										code
+									td None
+								tr
+									th Return
+									td
+										code
+									td Does not matter
+					button.btn.btn-default#retrieveContactsButton Retrieve Contacts
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Check phone numbers
+						.panel-body
+							p Check if the user's local phone book contacts has registered our app or not.
+							ul
+								li The results being returned from this methods is simply an array of Booleans, indicate whether the user is vz or not, corresponding to the parameter [String] index of phone number inputs.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code contacts.checkPhoneNumbers
+									td
+								tr
+									th Params
+									td 
+										code {[String]}
+									td Phone numbers
+								tr
+									th Return
+									td
+										code {[Boolean]}
+									td VZ user indication
+					form.form-inline
+						input.form-control#phoneNumbers(placeholder='Phone Numbers')
+						button.btn.btn-default#checkPhoneNumbersButton Check Contacts
+					em For testing purpose with this API Playground, seperate phone numbers by ',' in the above input, no space.
+
+			.cat#calendars
+				h2
+					span.label.label-default Calendars
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Get calendar list
+						.panel-body
+							p Get a list of all calendars {owned} by the current user. When doing init calendars and sync calendars, calendar Id is required returned from this function.
+							ul
+								li Only calendars owned by user will be returned, that is no editor or other types.
+								li In returned objects, id is the one used to identify calendar by google, we will use this id as our unique id in our database.
+								li !!! DO NOT USE ID 'primary' ANY TIME BECAUSE IT WILL RUIN OTHER CALENDAR SINCE IT IS NOT UNIQUE !!!
+							em Update -> Now also includes a field named imported indicating whether the user has imported the calendar or not. If yes, calendar's local information will also be returned.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code calendars.list
+									td
+								tr
+									th Params
+									td
+										code
+									td None
+								tr
+									th Return
+									td
+										code {[Object]}
+									td An array of calendars with id and other information returned from google or from local db
+					button.btn.btn-default#getCalendarListButton Get Calendar List
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Init calendar
+						.panel-body
+							p Init will wipe the current calendar stored in our database and clear all the events belongs to it. Then it will initialize a full request to Google Calendar API to receive and insert the calendar itself and associated events.
+							ul
+								li !!! WIPE! ONLY INIT ON CREATION CREATION FIRST TIME OR BROKEN !!!
+								li !!! USING 'primary' AS 'calendarId' IS RISTRICTED !!!
+								li !!! USER SCHOOL MUST BE ASSIGNED BEFORE MAKING THIS CALL !!!
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code calendars.init
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Calendar Id from google, NO 'primary'
+								tr
+									td
+										code {[String]}
+									td Array of tags which will be the default tags assigned to all associated event initially
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#calendarId(placeholder='Calendar ID')
+						input.form-control#calendarInitTags(placeholder='Default calendar tags')
+						button.btn.btn-default#initCalendarButton Init Calendar
+					em For testing purpose with this API Playground, seperate tags by ',' in the above input, no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Sync Calendar
+						.panel-body
+							p Sync calendar and update all associated events.
+							ul
+								li Sync will use the existing nextSyncToken (syncToken) stored with the calendar to call Google events API.
+								li Calendar's nextSyncToken will be updated for next sync.
+								li Events associated with the calendar that has changed will be updated.
+								li Events' visibility and tags will NOT be overwritten.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code calendars.sync
+									td
+								tr
+									thParams
+									td
+										code {Stirng}
+									td Calendar Id
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#calendarSyncId(placeholder='Calendar ID')
+						input.form-control#calendarSyncUserId(placeholder='User ID')
+						button.btn.btn-default#syncCalendarButton Sync Calendar
+					em For clients just leave userId blank (calling without passing userId) because it is automatically configured.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Watch calendar
+							strong(style='color:red') DO NOT CALL
+						.panel-body
+							p Watch calendar will establish a notification channel between google and our server. Whenever there is a event change, our sever will be notified and execute a calendar.sync.
+							ul
+								li !!! DON'T CALL THIS ON CLIENT !!!
+								li !!! ALWAYS UNWATCH AFTER DONE TESTING !!!
+								li Only for api demonstration, should not be called by clients since it will be execute along with calendar initiations.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code calendars.watch
+									td
+								tr
+									th Params
+									td
+										code {Stirng}
+									td Calendar Id from google, NO 'primary'
+								tr
+									th Return
+									td
+										code {Object}
+									td HTTP res from google
+					form.form-inline
+						input.form-control#calendarWatchId(placeholder='Calendar ID', disabled)
+						button.btn.btn-default#calendarWatchButton(disabled) Watch Calendar
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Unwatch calendar
+							strong(style='color:red') DO NOT CALL
+						.panel-body
+							p Unwatch a calendar. Stop receiving notifications on events changes from google notification channel.
+							ul
+								li Only for api demonstration, should not be called by clients since it will be execute along with calendar initiations.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code calendars.unwatch
+									td
+								tr
+									th Params
+									td
+										code {Stirng}
+									td Calendar Id from google, NO 'primary'
+								tr
+									th Return
+									td
+										code {Object}
+									td HTTP res from google
+					form.form-inline
+						input.form-control#calendarUnwatchId(placeholder='Calendar ID')
+						button.btn.btn-default#calendarUnwatchButton Unwatch Calendar
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Unwatch channel
+						.panel-body
+							p Unwatch a channel (calendar in this case).
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code channels.unwatch
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Channel ID (calendar's _id)
+								tr
+									td
+										code {String}
+									td Resource ID
+								tr
+									th Return
+									td
+										code {Object}
+									td HTTP res from google
+					form.form-inline
+						input.form-control#channelId(placeholder='Channel ID')
+						input.form-control#resourceId(placeholder='Resourse ID')
+						button.btn.btn-default#channelUnwatchButton Unwatch Calendar
+					em Channel ID is just Calendar's _id.
+
+			.cat#events
+				h2
+					span.label.label-default Events
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Import events from Facebook
+						.panel-body
+							p Import events from Facebook to our local db.
+							ul
+								li Functions like 'calendar.init', except from Facebook.
+								li !!! USER MUST HAVE LOGGED IN FROM FACEBOOK (DIRECTLY OR LINKED) !!!
+								li Clients needs to have 'user_events' permission from Facebook.
+								li Facebook events does not have a calendar like Google.
+								li Facebook does not allow creation or edition to the events.
+								li Events will be saved to local db just like other type of events.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.import.facebook
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Club name
+								tr
+									td
+										code {[String]}
+									td Tags (Apply to all events)
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#importEventsFromFacebookClub(placeholder='Club')
+						input.form-control#importEventsFromFacebookTags(placeholder='Tags')
+						button.btn.btn-default#importEventsFromFacebookButton Import Event
+					em For demostration on this page, seperate tags with ',', no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Sync events from Facebook
+						.panel-body
+							p Sync events from Facebook to our local db.
+							ul
+								li Existing events will not be updated.
+								li Events on our db that are deleted on Facebook will not be deleted.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.sync.facebook
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Club name
+								tr
+									td
+										code {[String]}
+									td Tags (Apply to all events)
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#syncEventsFromFacebookClub(placeholder='Club')
+						input.form-control#syncEventsFromFacebookTags(placeholder='Tags')
+						button.btn.btn-default#syncEventsFromFacebookButton Sync Event
+					em For demostration on this page, seperate tags with ',', no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Insert event
+						.panel-body
+							p Insert a event to selected calendar.
+							ul
+								li A 'calendar.sync' is excuted by the server after a successful insertion
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.insert
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Calendar Id (not _id)
+								tr
+									td
+										code {Object}
+									td event
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					pre
+						code.
+							{
+								summary: {String},
+								description: {String}?,
+								start: {
+									dateTime: {Date} # format RFC3399
+								},
+								end: {
+									dateTime: {Date} # format RFC3399
+								},
+								location: {String}?,
+								visibility: {String}?
+							}
+					form.form-inline
+						input.form-control#insertEventCalendarId(placeholder='Calendar ID')
+						input.form-control#insertEventSummary(placeholder='Summary')
+						input.form-control#insertEventStart(placeholder='Start')
+						input.form-control#insertEventEnd(placeholder='End')
+						button.btn.btn-default#insertEventButton Insert Event
+					em In client methods calls, please provide more attributes of the event object.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Insert Local Event
+						.panel-body
+							p Insert a event to local db (regardless to google or facebook).
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.insert.local
+									td
+								tr
+									th Params
+									td
+										code {Object}
+									td event
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					pre
+						code.
+							{
+								summary: {String},
+								description: {String}?,
+								start: {String} # format RFC3399
+								end: {String} # format RFC3399
+								location: {String}?,
+								visibility: {String}? # 'private' or 'public'
+								school: {String}
+								club: {String}
+								tags: {[String]}?
+								localAttendees: {[Object]}?
+									phoneNumber: {String}
+									displayName: {String}?
+									responseStatus: {String}?
+									userId: {String}?
+							}
+					form.form-inline
+						input.form-control#insertLocalEventSummary(placeholder='Summary')
+						input.form-control#insertLocalEventStart(placeholder='Start')
+						input.form-control#insertLocalEventEnd(placeholder='End')
+						input.form-control#insertLocalEventSchool(placeholder='School')
+						input.form-control#insertLocalEventClub(placeholder='Club')
+						input.form-control#insertLocalEventTags(placeholder='Tags')
+						button.btn.btn-default#insertLocalEventButton Insert Local Event
+					em In client methods calls, please provide more attributes of the event object.
+					em For demostration on this page, seperate tags with ',', no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Update event
+						.panel-body
+							p Update an event on google server with its id.
+							ul
+								li A 'calendar.sync' is excuted by the server after a successful update
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.update
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Event Id (not _id)
+								tr
+									td
+										code {Object}
+									td event
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					pre
+						code.
+							{
+								summary: {String}?,
+								description: {String}?,
+								start: {
+									dateTime: {Date}? # format RFC3399
+								},
+								end: {
+									dateTime: {Date}? # format RFC3399
+								},
+								location: {String}?,
+								visibility: {String}?
+							}
+					form.form-inline
+						input.form-control#updateEventId(placeholder='Event ID')
+						input.form-control#updateEventSummary(placeholder='Summary')
+						input.form-control#updateEventDescription(placeholder='Description')
+						input.form-control#updateEventLocation(placeholder='Location')
+						input.form-control#updateEventStart(placeholder='Start')
+						input.form-control#updateEventEnd(placeholder='End')
+						button.btn.btn-default#updateEventButton Update Event
+					em If above params are left blank, fileds will not change and remains the old value.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Update Local Event
+						.panel-body
+							p Edit or update local event (regardless to google or facebook).
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.update.local
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {String}
+									td _id of event
+								tr
+									td
+										code {Object}
+									td event
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					pre
+						code.
+							{
+								summary: {String}?,
+								description: {String}?,
+								start: {String}? # format RFC3399
+								end: {String}? # format RFC3399
+								location: {String}?,
+								visibility: {String}? # 'private' or 'public'
+								school: {String}?
+								club: {String}?
+								tags: {[String]}?
+								localAttendees: {[Object]}?
+									phoneNumber: {String}
+									displayName: {String}?
+									responseStatus: {String}?
+									userId: {String}?
+							}
+					form.form-inline
+						input.form-control#editLocalEventId(placeholder='_id')
+						input.form-control#editLocalEventSummary(placeholder='Summary')
+						input.form-control#editLocalEventStart(placeholder='Start')
+						input.form-control#editLocalEventEnd(placeholder='End')
+						input.form-control#editLocalEventSchool(placeholder='School')
+						input.form-control#editLocalEventClub(placeholder='Club')
+						input.form-control#editLocalEventTags(placeholder='Tags')
+						button.btn.btn-default#editLocalEventButton Edit Local Event
+					em In client methods calls, please provide more attributes of the event object.
+					em For demostration on this page, seperate tags with ',', no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Delete event
+						.panel-body
+							p Delete a event from its associated calendar.
+							ul
+								li A 'calendar.sync' is excuted by the server after a successful insertion
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.delete
+									td
+								tr
+									th Params
+									td
+										code {Stirng}
+									td _id of event
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#deleteEventId(placeholder='Event ID')
+						button.btn.btn-default#deleteEventButton Delete Event
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Delete Local Event
+						.panel-body
+							p Delete a event from local db.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.delete.local
+									td
+								tr
+									th Params
+									td
+										code {Stirng}
+									td Event Id (not _id)
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#deleteLocalEventId(placeholder='Event ID')
+						button.btn.btn-default#deleteLocalEventButton Delete Event
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set event's visibility
+						.panel-body
+							p Change event's visibility through google api as well as updating in our own server. Users will get events feeds that are public or default.
+							ul
+								li Default can't be set by us neither the user, only first time on creation without assign a visibility.
+								li Only string in ['public', 'private', 'confidential'] can be passed.
+								li A calenders.sync call is automatically executed after a success update, so calendar in our database will catch the update.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.setVisibility
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Event Id (not _id)
+								tr
+									td
+										code {String}
+									td Visibility ['public', 'private', 'confidential']
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#setEventVisibilityId(placeholder='Event ID')
+						select.form-control#setEventVisibilityType
+							option(value='public') public
+							option(value='private') private
+							option(value='confidential') confidential
+						button.btn.btn-default#setEventVisibilityButton Set Visibility
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set local event's visibility
+						.panel-body
+							p Change event's visibility in local db, details refer to above method.
+							ul
+								li Unlike above method, only 2 values available ['public', 'private']
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.setVisibility.local
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Event Id (not _id)
+								tr
+									td
+										code {String}
+									td Visibility ['public', 'private']
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#setLocalEventVisibilityId(placeholder='Event _id')
+						select.form-control#setLocalEventVisibilityType
+							option(value='public') public
+							option(value='private') private
+						button.btn.btn-default#setLocalEventVisibilityButton Set Visibility
+
+			.cat#attendees
+				h2
+					span.label.label-default Attendees
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Get Attendees
+						.panel-body
+							p Get attendees of a certain event.
+							ul
+								li !!! Events' _id (unique mongo id) is passed as parameter, not events' id !!!
+								li Preprcess attendees result.
+								li Will indicate response status.
+								li Will indicate whether the user has registered with our app.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.get
+									td
+								tr
+									th Params
+									td
+										code {Stirng}
+									td Event ID (_id)
+								tr
+									th Return
+									td
+										code {Object}
+									td Attendees as a JSON/JS object
+					pre
+						code.
+							{
+								email: {String},
+								displayName: {String}?,
+								// responseStatus
+								// needsAction -> hasn't responsed yet
+								// declined
+								// tentative
+								// accepted
+								responseStatus: {String},
+								userId: {String}?,
+								picture: {String}?
+							}
+					form.form-inline
+						input.form-control#getAttendeesEventId(placeholder='Event ID')
+						button.btn.btn-default#getAttendees Get Attendees
+
+			.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Add Attendees
+						.panel-body
+							p Add attendees to an event.
+							ul
+								li Method will preprcess attendees to avoid duplication.
+								li !! This is raw level api being used in another method call, to add attendee with push notification, call 'invitations.event.pn' instead.
+								li Can be used to invite google calendar user by providing email address only.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.add
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {String}
+									td Event ID
+								tr
+									td
+										code {[Object]}
+									td attendees
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					pre Param -> attendees
+						code.
+							[{
+								email: {String},
+								displayName: {String}?,
+								// responseStatus
+								// needsAction -> hasn't responsed yet
+								// declined
+								// tentative
+								// accepted
+								responseStatus: {String}?
+							}, ...]
+					form.form-inline
+						input.form-control#addAttendeesEventId(placeholder='Event ID')
+						input.form-control#addAttendeesEmails(placeholder='Emails')
+						button.btn.btn-default#addAttendees Add Attendees
+					em For testing purpose with this API Playground, seperate emails by ',' in the above input, no space.
+
+
+			.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Remove Attendees
+						.panel-body
+							p Remove attendees of an event.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.remove
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {String}
+									td Event ID
+								tr
+									td
+										code {[Object]}
+									td attendees
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					pre Param -> attendees
+						code.
+							[{
+								email: {String}
+							}, ...]
+					form.form-inline
+						input.form-control#removeAttendeesEventId(placeholder='Event ID')
+						input.form-control#removeAttendeesEmails(placeholder='Emails')
+						button.btn.btn-default#removeAttendees Remove Attendees
+					em For testing purpose with this API Playground, seperate emails by ',' in the above input, no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Accept Event
+						.panel-body
+							p Accept an event as a attendee.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.accept
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Event ID
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#attendeesAcceptEventId(placeholder='Event ID')
+						button.btn.btn-default#attendeesAcceptButton Accept Event
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Declined Event
+						.panel-body
+							p Reject an event as a attendee.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.decline
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Event ID
+								tr
+									th Return
+									td
+										code {Object}
+									td Does not matter
+					form.form-inline
+						input.form-control#attendeesDeclineEventId(placeholder='Event ID')
+						button.btn.btn-default#attendeesDeclineButton Decline Event
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Add Local Attendees
+						.panel-body
+							li !!! Events' _id (unique mongo id) is passed as parameter, not events' id !!!
+							p Add a local attendee with phone number to a given Event Id.
+							li !! This is raw level api being used in another method call, to add attendee with push notification, call 'invitations.event.sms' instead.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.add.local
+									td
+								tr
+									th(rowspan='2')  Params
+									td
+										code {String}
+									td Event ID (_id)
+								tr
+									td
+										code {Object}
+									td Attendee
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					pre
+						code.
+							{
+								phoneNumber: {String},
+								displayName: {String}?,
+								// default is set to needsAction
+								responseStatus: {String}?
+							}
+					form.form-inline
+						input.form-control#dbAttendeesAddEventId(placeholder='Event Id')
+						input.form-control#dbAttendeesPhoneNumber(placeholder='Phone Number')
+						button.btn.btn-default#dbAttendeesAddButton Add Local Attendee
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Remove Local Attendees
+						.panel-body
+							li !!! Events' _id (unique mongo id) is passed as parameter, not events' id !!!
+							p Remove a local attendee with phone number to a given Event Id.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.remove.local
+									td
+								tr
+									th(rowspan='2')  Params
+									td
+										code {String}
+									td Event ID
+								tr
+									td
+										code {Object}
+									td Phone Number
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#dbAttendeesRemoveEventId(placeholder='Event Id')
+						input.form-control#dbAttendeesRemovePhoneNumber(placeholder='Phone Number')
+						button.btn.btn-default#dbAttendeesRemoveButton Remove Local Attendee
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Local Accept Event
+						.panel-body
+							li !!! Events' _id (unique mongo id) is passed as parameter, not events' id !!!
+							p Let local user with a phone number to accept an event.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.accept.local
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Event ID
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#dbAttendeesAcceptEventId(placeholder='Event Id')
+						button.btn.btn-default#dbAttendeesAcceptButton Accept Event
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Local Decline Event
+						.panel-body
+							li !!! Events' _id (unique mongo id) is passed as parameter, not events' id !!!
+							p Let local user with a phone number to decline an event.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.decline.local
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Event ID
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#dbAttendeesDeclineEventId(placeholder='Event Id')
+						button.btn.btn-default#dbAttendeesDeclineButton Decline Event
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Update Local Attendees
+						.panel-body
+							li !!! Events' _id (unique mongo id) is passed as parameter, not events' id !!!
+							p Update local attendees to re check each attendee's VZ profile.
+							em Should later be called in events sync or calendar sync methods, or somewhere related like when insert new item to UsersList. Should be transparent later to the clients.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code attendees.update.local
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Event ID
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#dbAttendeesUpdateEventId(placeholder='Event Id')
+						button.btn.btn-default#dbAttendeesUpdateButton Update Attendees
+
+			.cat#invitations
+				h2
+					span.label.label-default Invitations
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Update Device Token
+						.panel-body
+							p !!! CLIENTS MUST CALL THIS METHOD IN ORDER TO RECEIVE NOTIFICATIONS !!!
+							p A logged in user is required to perform this task.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code notifications.updateToken
+									td
+								tr
+									th Params
+									td
+										code {Stirng}
+									td Token
+								tr
+									th Return
+									td
+										code {Object}
+									td JSON object
+					form.form-inline
+						input.form-control#updateDeviceToken(placeholder='Token')
+						button.btn.btn-default#updateDeviceTokenButton Update Token
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Send Test Notification
+						.panel-body
+							p A logged in user is required to perform this task.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code notifications.test
+									td
+								tr
+									th Params
+									td
+										code None
+									td 
+								tr
+									th Return
+									td
+										code {Object}
+									td JSON object
+					form.form-inline
+						button.btn.btn-default#sendTestNotificationButton Send
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Event Invitation with PN
+						.panel-body
+							p Invite a VZ user to an event by sending push notification.
+							ul
+								li !!! TARGET USER MUST HAVE CALLED 'notifications.updateToken' TO UPDATE ITS DEVICE TOKEN ALREADY !!!
+								li Invited user will be added to that event as a google attendee.
+								li Invited user has 'needsAction' responseStatus in the event.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code invitations.event.sms
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Event ID (_id)
+								tr
+									td
+										code {Stirng}
+									td User ID
+								tr
+									th Return
+									td
+										code {Object}
+									td JSON object
+					form.form-inline
+						input.form-control#inviteEventWithPNEventId(placeholder='Event ID')
+						input.form-control#inviteEventWithPNUserId(placeholder='User ID')
+						button.btn.btn-default#inviteEventWithPNButton Invite
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Invite with SMS
+						.panel-body
+							p Invite user to join our app by sending SMS messages using Twilio services.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code invitations.app.sms
+									td
+								tr
+									th Params
+									td
+										code {Stirng}
+									td Phone Number
+								tr
+									th Return
+									td
+										code {Object}
+									td JSON object
+					form.form-inline
+						input.form-control#inviteWithSMSPhoneNumber(placeholder='Phone Number')
+						button.btn.btn-default#inviteWithSMSButton Invite with SMS
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Event Invitation with SMS
+						.panel-body
+							p Invite user to an event by sending SMS messages using Twilio services.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code invitations.event.sms
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Event ID
+								tr
+									td
+										code {Stirng}
+									td Phone Number
+								tr
+									th Return
+									td
+										code {Object}
+									td JSON object
+					form.form-inline
+						input.form-control#inviteEventWithSMSEventId(placeholder='Event ID')
+						input.form-control#inviteEventWithSMSPhoneNumber(placeholder='Phone Number')
+						button.btn.btn-default#inviteEventWithSMSButton Invite
+
+			.cat#tags
+				h2
+					span.label.label-default Tags & Clubs
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Get School Tag List
+						.panel-body
+							p Get the tag list of a certain school that contains all categories and tags.
+							strong Update
+							em Not parameter is optional, if no school is specified it will just return the user's school.
+							ul
+								li One school on tag list.
+								li Can not and should not be modified by clients.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code tags.school
+									td
+								tr
+									th Params
+									td
+										code {Stirng}?
+									td School name
+								tr
+									th Return
+									td
+										code {Object}
+									td The actual Tag list as a JSON/JS object
+					form.form-inline
+						input.form-control#tagsSchoolName(placeholder='School Name')
+						button.btn.btn-default#tagsSchoolButton Get Tags
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Get User's Tags
+						.panel-body
+							p Get the tags that the user is subscribed to, in the same JSON format as
+							code tags.school
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code tags.user
+									td
+								tr
+									th Params
+									td
+										code 
+									td None
+								tr
+									th Return
+									td
+										code {Object}
+									td Tags as a JSON/JS object
+					form.form-inline
+						button.btn.btn-default#tagsUserButton Get Tags
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set calendar tags
+						.panel-body
+							p Calendar will have tags already set during initialization, this method is used when the user is willing to modify the default tags of the calendar.
+							ul
+								li !!! CALENDAR MUST BE INITIALIZED BEFORE THIS METHOD CALL !!!
+								li Only new events associated with the calendar will have the new default tags.
+								li Previous events will not be updated.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code calendars.setTags
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Calendar Id
+								tr
+									td
+										code {[String]}
+									td Array of string containing all tags, not accumulative
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#calendarIdSetTags(placeholder='Calendar Id')
+						input.form-control#calendarTags(placeholder='Tags seperated by ","')
+						button.btn.btn-default#calendarTagsButton Set Tags
+					em For testing purpose with this API Playground, seperate tags by ',' in the above input, no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set event tags
+						.panel-body
+							p Event will have tags already set during initialization, this method is used when the user is willing to modify the default tags of the event.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code events.setTags
+									td
+								tr
+									th(rowspan='2') Params
+									td
+										code {Stirng}
+									td Event Id
+								tr
+									td
+										code {[String]}
+									td Array of string containing all tags, not accumulative
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#eventIdSetTags(placeholder='Event Id')
+						input.form-control#eventTags(placeholder='Tags seperated by ","')
+						button.btn.btn-default#eventTagsButton Set Tags
+					em For testing purpose with this API Playground, seperate tags by ',' in the above input, no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set user tags
+						.panel-body
+							p Set user tag subsription, so feeds to user will be filtered.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.setTags
+									td
+								tr
+									th Params
+									td
+										code {[String]}
+									td Array of string containing all tags, not accumulative
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#userTags(placeholder='Tags seperated by ","')
+						button.btn.btn-default#userTagsButton Set Tags
+					em For testing purpose with this API Playground, seperate tags by ',' in the above input, no space.
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Set user excluded clubs
+						.panel-body
+							p Default following all clubs, only clubs in the list are excluded. 
+							ul
+								li Calendar ID passed instead of actuall club name because that is subject to change.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.setExcludedClubs
+									td
+								tr
+									th Params
+									td
+										code {[String]}
+									td An array of calendar ids
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#userClubs(placeholder='Ids seperated by ","')
+						button.btn.btn-default#userClubsButton Set Excluded Clubs
+					em For testing purpose with this API Playground, seperate ids by ',' in the above input, no space.
+
+			.cat#likes
+				h2
+					span.label.label-default Likes
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Like an event
+						.panel-body
+							p A user can like an event, so there will be a subscription of only the events the user liked.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.like
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Event Id
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#likeEvent(placeholder='Event Id')
+						button.btn.btn-default#likeEventButton Like event
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Unlike an event
+						.panel-body
+							p A user can unlike an event.
+						table.table
+							tbody
+								tr
+									th Method
+									td
+										code users.unlike
+									td
+								tr
+									th Params
+									td
+										code {String}
+									td Event Id
+								tr
+									th Return
+									td
+										code {Integer}
+									td 0 or 1
+					form.form-inline
+						input.form-control#unlikeEvent(placeholder='Event Id')
+						button.btn.btn-default#unlikeEventButton Unlike
+			
+			.cat#subscriptions
+				h2
+					span.label.label-default Subscriptions
+				hr
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title All calendars by user
+						.panel-body
+							p Get all calendars init by the user.
+							code calendars.owner
+					em Demo - 
+						a(href="{{pathFor 'calendars'}}", target='_blank') List Calendars
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title All events by user
+						.panel-body
+							p Get all events created by the user.
+							code events.owner
+					em Demo - 
+						a(href="{{pathFor 'events'}}", target='_blank') List Events
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title All calendars by school
+						.panel-body
+							p Get all calendars (clubs) within school's scope
+							code calendars.school
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title All events by school
+						.panel-body
+							p Get all events withing school's scope
+							ul
+								li Will public all events start from yesterday (subject to change).
+								li School name parameter is optional, if not specified, will take the user's school.
+							table
+								tr
+									th Parameters
+									td
+										code {String}?
+									td School name
+							code events.school
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Calendars for user
+						.panel-body
+							p Get the calendars the user is following, exluding excluded clubs.
+							code calendars.feeds
+					em Demo - 
+						a(href="{{pathFor 'calendarsFeeds'}}", target='_blank') List Calendars Feeds
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Events for user
+						.panel-body
+							p Get the events from calendars followed by user and with matching tags.
+							em Now becomes a composite pub / sub, will also include owner's information.
+							ol
+								li More than one collection is passed to clients, that includes both the Events collection and UsersList collection.
+								li Events collection behaves just like before, UsersList is used to store owner's information including name, picture, phone number and etc.
+								li Will public all events start from yesterday (subject to change).
+								li
+									em Subscription does not allow preprocessed collection or we will lose reactivity, so the returned data set will not be like a complete object with both events and owner info in it. Clients needs to do both 
+									code UsersList.find()
+									code Events.find()
+									em and do string matching of
+									code userId (UsersList)
+									code  createdBy (Events) 
+									em on the client side to figure out who owns what event.
+							ul
+								li Following events base on tags, feeds algorithm ->
+									ol
+										li Match user's school and events' school
+										li Match tags of events and user (intersect)
+										li Check events' visibility -> public
+								li Event feeds are sorted by starting date in descending order.
+								li Feeds can be configured by the editing user's tags and excluded clubs list.
+							code events.feeds
+					em Demo - 
+						a(href="{{pathFor 'eventsFeeds'}}", target='_blank') List Events Feeds
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Liked events by user
+						.panel-body
+							p Get all events liked by the current user
+							code events.likes
+
+				.subcat
+					.panel.panel-default
+						.panel-heading
+							h3.panel-title Contacts of user
+							p Contact will come with an attribute called 'userId' which is used to track if the user is registered in our system. userId = Null if no user found.
+						.panel-body
+							p Get all contacts belong to a user
+							code contacts.owner
+			
